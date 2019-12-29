@@ -11,13 +11,26 @@ class MainHandler(web.RequestHandler):
 
 
 class PeopleIdHandler(web.RequestHandler):
-    async def get(self, *args, **kwargs):
+    def initialize(self, name):
+        self.db_name = name
+
+    async def get(self, id, *args, **kwargs):
         self.write("用户id:{}".format(id))
 
 
+class PeopleNameHandler(web.RequestHandler):
+    async def get(self, name, *args, **kwargs):
+        self.write("用户名字:{}".format(name))
+
+
+people_db = {
+    "name": "people"
+}
+
 urls = [
-    ("/", MainHandler),
-    ("/people/(\d+)/", PeopleIdHandler)
+    tornado.web.URLSpec("/", MainHandler, name="index"),
+    tornado.web.URLSpec("/people/(\d+)/", PeopleIdHandler, people_db, name="people_id"),
+    tornado.web.URLSpec("/people/(\w+)/", PeopleNameHandler)
 ]
 
 if __name__ == "__main__":
